@@ -24,6 +24,12 @@ namespace TranscationApp.Services
             return  _context.Transactions.ToList();
         }
 
+        public string GetBalance()
+        {
+            var balance = _context.Transactions.OrderByDescending(t => t.id).Take(1).Select(x => x.Balance).ToList().FirstOrDefault().ToString();
+            return balance;
+        }
+
         public string SetDebitAmount(TranscationModel transaction)
         {
             var balance = _context.Transactions.OrderByDescending(t => t.id).Take(1).Select(x => x.Balance).ToList().FirstOrDefault();
@@ -37,7 +43,7 @@ namespace TranscationApp.Services
             }
             else
             {
-                return "There is not sifficient Balance to Withdraw";
+                return "You donot have sufficient Funds to Withdraw";
             }
 
         }

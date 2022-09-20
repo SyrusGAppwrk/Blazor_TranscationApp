@@ -7,5 +7,6 @@ namespace TranscationApp.Interfaces
         Task<IEnumerable<TranscationModel>> GetAllTransactions();
         Task CreditAmount(TranscationModel transaction);
         string SetDebitAmount(TranscationModel transaction);
+        string GetBalance();
     }
 }

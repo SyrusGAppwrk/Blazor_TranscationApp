@@ -2,9 +2,10 @@
 @inject ITranscationServices TranscationServices
 
 <PageTitle>Index</PageTitle>
-
+<div>
 <h2>Transaction History</h2>
-
+</div> 
+<div>
 @if (trans != null)
 {
     <BSTable IsResponsive="true" IsStriped="true" Class="p-3">
@@ -29,21 +30,19 @@
                 </BSTR>
             }
         </BSTBody>
-        @* <BSTFoot>
-    <BSTR>
-    <BSTD ColSpan="4">Spanned Table Footer Here</BSTD>
-    </BSTR>
-
-    </BSTFoot>*@
     </BSTable>
 
 }
+</div>
 
 @code {
     private dynamic trans;
+    private dynamic balance;
     // get all Transactions List
     protected override async Task OnInitializedAsync()
     {
         trans = (await TranscationServices.GetAllTransactions()).ToList();
+        balance = TranscationServices.GetBalance().ToString();
     }
+    
 }
