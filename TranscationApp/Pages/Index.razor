@@ -1,0 +1,49 @@
+﻿@page "/"
+@inject ITranscationServices TranscationServices
+
+<PageTitle>Index</PageTitle>
+
+<h2>Transaction History</h2>
+
+@if (trans != null)
+{
+    <BSTable IsResponsive="true" IsStriped="true" Class="p-3">
+        <BSTHead>
+            <BSTR>
+                <BSTD>Date</BSTD>
+                <BSTD>Description</BSTD>
+                <BSTD>Credit Amount</BSTD>
+                <BSTD>Debit Amount</BSTD>
+                <BSTD>Balance</BSTD>
+            </BSTR>
+        </BSTHead>
+        <BSTBody>
+            @foreach (var txn in this.trans)
+            {
+                <BSTR>
+                    <BSTD>@txn.Date.ToShortDateString()</BSTD>
+                    <BSTD>@txn.Description</BSTD>
+                    <BSTD style="color:green;font-weight:bold">@txn.Credit</BSTD>
+                    <BSTD style="color:red;font-weight:bold">@txn.Debit</BSTD>
+                    <BSTD>@txn.Balance</BSTD>
+                </BSTR>
+            }
+        </BSTBody>
+        @* <BSTFoot>
+    <BSTR>
+    <BSTD ColSpan="4">Spanned Table Footer Here</BSTD>
+    </BSTR>
+
+    </BSTFoot>*@
+    </BSTable>
+
+}
+
+@code {
+    private dynamic trans;
+    // get all Transactions List
+    protected override async Task OnInitializedAsync()
+    {
+        trans = (await TranscationServices.GetAllTransactions()).ToList();
+    }
+}

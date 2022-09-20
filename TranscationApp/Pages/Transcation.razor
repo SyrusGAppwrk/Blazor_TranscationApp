@@ -1,0 +1,104 @@
+﻿@page "/transcation"
+@using TranscationApp.Interfaces
+@using TranscationApp.Models
+
+@inject ICreditServices CreditServices
+@inject IDebitServices DebitServices
+@inject IJSRuntime JsRuntime
+
+<h3>Transaction Manger</h3>
+<span class="badge text-bg-secondary">Secondary</span>
+<div class="container">
+    <div class="row">
+        @*Credit Part*@
+        <div class="col-md-6 p-3" style="border:solid 1px black">
+            <BSBadge Color="BSColor.Success">Credit</BSBadge>
+            @if (trans != null)
+            {
+                <EditForm Model="trans">
+                    <DataAnnotationsValidator></DataAnnotationsValidator>
+                    <ValidationSummary></ValidationSummary>
+                    <div class="form-group  p-2">
+                        <label for="description">Description</label>
+                        <InputTextArea id="desc" @bind-Value="trans.Description" class="form-control"></InputTextArea>
+                    </div>
+                    <div class="form-group p-2">
+                        <label for="credit">Credit Amount</label>
+                        <InputNumber id="credit" @bind-Value="trans.Credit" class="form-control"></InputNumber>
+                    </div>
+                    <div class="form-group  p-2">
+                        <button class="btn btn-primary" @onclick="OnCredit">Credit Amount</button>
+                    </div>
+                </EditForm>
+            }
+        </div>
+
+        @*Debit Part *@
+        <div class="col-md-6 p-3" style="border:solid 1px black">
+            <BSBadge Color="BSColor.Danger">Debit</BSBadge>
+            @if (trans != null)
+            {
+                <EditForm Model="debitTrans">
+                    <DataAnnotationsValidator></DataAnnotationsValidator>
+                    <ValidationSummary></ValidationSummary>
+                    <div class="form-group p-2">
+                        <label for="description">Description</label>
+                        <InputTextArea id="desc" @bind-Value="debitTrans.Description" class="form-control"></InputTextArea>
+                    </div>
+                    <div class="form-group p-2">
+                        <label for="debit">Debit Amount</label>
+                        <InputNumber id="debit" @bind-Value="debitTrans.Debit" class="form-control"></InputNumber>
+                    </div>
+                    <div class="form-group p-2">
+                        <button class="btn btn-danger" @onclick="onDebit">Withdraw Amount</button>
+                    </div>
+                </EditForm>
+            }
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@code {
+    private TranscationModel? trans;
+    private TranscationModel? debitTrans;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        trans = new TranscationModel();
+        debitTrans = new TranscationModel();
+    }
+    //Credit onSubmit
+    private async Task OnCredit()
+    {
+        if (trans != null && trans.Credit > 0)
+        {
+            await CreditServices.CreditAmount(this.trans);
+            OnInitialized();
+            await JsRuntime.InvokeVoidAsync("alert", "The amount has been credited in your account successfully.");
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Enter credit amount more than 0.");
+        }
+    }
+    // Debit onSubmit
+    private async Task onDebit()
+    {
+        if (debitTrans != null && debitTrans.Debit > 0)
+        {
+            string msg = DebitServices.DebitAmount(this.debitTrans);
+            OnInitialized();
+            await JsRuntime.InvokeVoidAsync("alert", msg);
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Warning! Enter debit amount more than 0");
+        }
+    }
+
+}
